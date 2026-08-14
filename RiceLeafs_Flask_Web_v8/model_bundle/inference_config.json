@@ -1,0 +1,20 @@
+{
+  "image_size": [
+    320,
+    320
+  ],
+  "temperature": 0.9620919162365766,
+  "low_conf_threshold": 0.5,
+  "high_conf_threshold": 0.6,
+  "min_confidence_margin": 0.1,
+  "use_tta": true,
+  "auto_select_tta": true,
+  "tta_transforms": [
+    "original",
+    "horizontal_flip",
+    "vertical_flip"
+  ],
+  "resize_method": "tf.image.resize_with_pad",
+  "model_output": "logits",
+  "warning": "Confidence adalah estimasi model, bukan diagnosis pasti. Low confidence juga bukan bukti bahwa gambar bukan daun padi."
+}

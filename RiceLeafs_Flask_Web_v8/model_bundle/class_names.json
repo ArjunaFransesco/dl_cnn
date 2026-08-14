@@ -1,0 +1,14 @@
+{
+  "class_names": [
+    "BrownSpot",
+    "Healthy",
+    "Hispa",
+    "LeafBlast"
+  ],
+  "class_to_index": {
+    "BrownSpot": 0,
+    "Healthy": 1,
+    "Hispa": 2,
+    "LeafBlast": 3
+  }
+}

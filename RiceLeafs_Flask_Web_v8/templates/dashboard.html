@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b2e22">
+  <title>Dashboard — PadiLens</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body class="dashboard-body" data-page="dashboard">
+  <div class="page-grain" aria-hidden="true"></div>
+  <nav class="site-nav" aria-label="Navigasi utama">
+    <a class="brand" href="{{ url_for('index') }}">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M31.5 7.5C18.1 8.8 9.4 16.9 8 31.8c8.7.6 16-2.5 19.7-8.6 2.8-4.5 3.6-10 3.8-15.7Z"/><path d="M10 30c5.2-6.9 10.5-10.7 17.2-15.1"/></svg>
+      <span>PadiLens</span>
+    </a>
+    <div class="nav-links">
+      <a href="{{ url_for('index') }}">Klasifikasi</a>
+      <a href="{{ url_for('history') }}">Riwayat</a>
+      <a class="nav-action" href="{{ url_for('index') }}#analyze">Analisis daun</a>
+    </div>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-label="Buka navigasi"><span></span><span></span></button>
+  </nav>
+
+  <main class="dashboard-main">
+    <header class="dashboard-hero">
+      <div>
+        <p class="eyebrow">Ringkasan klasifikasi lapangan</p>
+        <h1>Pola hasil, dibaca dalam konteks.</h1>
+        <p>Dashboard merangkum seluruh klasifikasi tanpa akun pengguna: kualitas keputusan, distribusi kelas, serta perubahan volume dari waktu ke waktu.</p>
+      </div>
+      <div class="dashboard-controls">
+        <label for="trend-days">Rentang tren</label>
+        <select id="trend-days">
+          <option value="7">7 hari</option>
+          <option value="14" selected>14 hari</option>
+          <option value="30">30 hari</option>
+          <option value="90">90 hari</option>
+        </select>
+        <button type="button" id="refresh-dashboard">Perbarui data</button>
+      </div>
+    </header>
+
+    <aside class="database-note" id="database-note" data-backend="{{ database_backend }}">
+      <span class="database-indicator"></span>
+      <p id="database-note-text">Memeriksa koneksi database.</p>
+    </aside>
+
+    <section class="kpi-grid" aria-label="Ringkasan statistik">
+      <article class="kpi-card kpi-primary">
+        <span>Total klasifikasi</span>
+        <strong id="kpi-total">0</strong>
+        <small>Seluruh citra yang telah diproses</small>
+      </article>
+      <article class="kpi-card">
+        <span>Hasil valid</span>
+        <strong id="kpi-valid">0</strong>
+        <small id="kpi-valid-rate">0% dari seluruh klasifikasi</small>
+      </article>
+      <article class="kpi-card">
+        <span>Ditolak</span>
+        <strong id="kpi-rejected">0</strong>
+        <small>Confidence berada di bawah threshold</small>
+      </article>
+      <article class="kpi-card kpi-accent">
+        <span>Rata-rata confidence</span>
+        <strong id="kpi-confidence">0%</strong>
+        <small>Rata-rata seluruh keputusan model</small>
+      </article>
+    </section>
+
+    <section class="chart-grid">
+      <article class="chart-card chart-wide">
+        <div class="chart-heading">
+          <div><span>Aktivitas</span><h2>Tren klasifikasi</h2></div>
+          <p>Jumlah citra yang dianalisis per hari.</p>
+        </div>
+        <div class="chart-wrap chart-tall"><canvas id="trend-chart"></canvas></div>
+      </article>
+
+      <article class="chart-card chart-narrow dark-chart-card">
+        <div class="chart-heading">
+          <div><span>Komposisi</span><h2>Distribusi kelas</h2></div>
+        </div>
+        <div class="chart-wrap"><canvas id="distribution-chart"></canvas></div>
+        <div class="chart-legend" id="distribution-legend"></div>
+      </article>
+
+      <article class="chart-card chart-half">
+        <div class="chart-heading">
+          <div><span>Kualitas prediksi</span><h2>Confidence per kelas</h2></div>
+          <p>Rata-rata keyakinan model untuk setiap label.</p>
+        </div>
+        <div class="chart-wrap"><canvas id="confidence-chart"></canvas></div>
+      </article>
+
+      <article class="chart-card chart-half status-composition">
+        <div class="chart-heading">
+          <div><span>Validasi</span><h2>Status keputusan</h2></div>
+        </div>
+        <div class="status-bars">
+          <div><span>Valid</span><strong id="status-valid">0</strong><i><b id="status-valid-bar"></b></i></div>
+          <div><span>Perlu ditinjau</span><strong id="status-uncertain">0</strong><i><b id="status-uncertain-bar"></b></i></div>
+          <div><span>Ditolak</span><strong id="status-rejected">0</strong><i><b id="status-rejected-bar"></b></i></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="recent-section">
+      <div class="recent-heading">
+        <div><p class="eyebrow">Aktivitas terbaru</p><h2>Riwayat klasifikasi terakhir.</h2></div>
+        <a href="{{ url_for('history') }}">Lihat seluruh riwayat</a>
+      </div>
+      <div class="history-table-wrap">
+        <table class="history-table">
+          <thead><tr><th>Citra</th><th>Hasil</th><th>Status</th><th>Confidence</th><th>Sumber</th><th>Waktu</th></tr></thead>
+          <tbody id="recent-history"><tr><td colspan="6" class="empty-state">Memuat riwayat.</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="dashboard-cta">
+      <div><p class="eyebrow">Tambahkan data baru</p><h2>Analisis berikutnya akan langsung masuk ke dashboard.</h2></div>
+      <a class="button button-light" href="{{ url_for('index') }}#analyze">Klasifikasikan daun</a>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand footer-brand" href="{{ url_for('index') }}"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M31.5 7.5C18.1 8.8 9.4 16.9 8 31.8c8.7.6 16-2.5 19.7-8.6 2.8-4.5 3.6-10 3.8-15.7Z"/><path d="M10 30c5.2-6.9 10.5-10.7 17.2-15.1"/></svg><span>PadiLens</span></a>
+    <p>Dashboard publik tanpa akun, sesuai spesifikasi sistem.</p>
+    <div class="footer-links"><a href="{{ url_for('index') }}">Klasifikasi</a><a href="{{ url_for('history') }}">Riwayat</a></div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}" defer></script>
+</body>
+</html>

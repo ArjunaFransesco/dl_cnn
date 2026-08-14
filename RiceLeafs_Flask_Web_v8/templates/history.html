@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b2e22">
+  <title>Riwayat Klasifikasi — PadiLens</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body class="dashboard-body" data-page="history">
+  <div class="page-grain" aria-hidden="true"></div>
+  <nav class="site-nav" aria-label="Navigasi utama">
+    <a class="brand" href="{{ url_for('index') }}"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M31.5 7.5C18.1 8.8 9.4 16.9 8 31.8c8.7.6 16-2.5 19.7-8.6 2.8-4.5 3.6-10 3.8-15.7Z"/><path d="M10 30c5.2-6.9 10.5-10.7 17.2-15.1"/></svg><span>PadiLens</span></a>
+    <div class="nav-links"><a href="{{ url_for('index') }}">Klasifikasi</a><a href="{{ url_for('dashboard') }}">Dashboard</a><a class="nav-action" href="{{ url_for('index') }}#analyze">Analisis daun</a></div>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-label="Buka navigasi"><span></span><span></span></button>
+  </nav>
+
+  <main class="dashboard-main history-main">
+    <header class="dashboard-hero history-hero">
+      <div><p class="eyebrow">Arsip klasifikasi</p><h1>Setiap hasil, tetap dapat ditelusuri.</h1><p>Riwayat bersifat umum karena sistem tidak menggunakan akun. Gunakan filter untuk memeriksa kelas atau status tertentu.</p></div>
+    </header>
+
+    <section class="filter-rail">
+      <label>Filter kelas<select id="class-filter"><option value="">Semua kelas</option><option value="BrownSpot">Brown Spot</option><option value="Healthy">Healthy</option><option value="Hispa">Hispa</option><option value="LeafBlast">Leaf Blast</option></select></label>
+      <label>Filter status<select id="status-filter"><option value="">Semua status</option><option value="valid">Valid</option><option value="uncertain">Perlu ditinjau</option><option value="rejected_low_confidence">Ditolak</option></select></label>
+      <button type="button" id="apply-filter">Terapkan filter</button>
+      <span id="history-total">0 data</span>
+    </section>
+
+    <section class="history-cards" id="history-cards"><p class="empty-state">Memuat riwayat.</p></section>
+    <nav class="pagination" aria-label="Navigasi halaman"><button type="button" id="previous-page">Sebelumnya</button><span id="page-indicator">Halaman 1</span><button type="button" id="next-page">Berikutnya</button></nav>
+  </main>
+
+  <footer><a class="brand footer-brand" href="{{ url_for('index') }}"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M31.5 7.5C18.1 8.8 9.4 16.9 8 31.8c8.7.6 16-2.5 19.7-8.6 2.8-4.5 3.6-10 3.8-15.7Z"/><path d="M10 30c5.2-6.9 10.5-10.7 17.2-15.1"/></svg><span>PadiLens</span></a><p>Riwayat disimpan untuk evaluasi sistem dan visualisasi dashboard.</p><div class="footer-links"><a href="{{ url_for('dashboard') }}">Dashboard</a><a href="{{ url_for('index') }}">Klasifikasi</a></div></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="{{ url_for('static', filename='js/history.js') }}" defer></script>
+</body>
+</html>
